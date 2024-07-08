@@ -1,2 +1,5 @@
 *.mat
 *.h5
+/assets
+/articles
+Plot_ICA_Kernels.ipynb
