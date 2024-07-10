@@ -1,13 +1,13 @@
 import numpy as np
 from scipy.signal import butter, filtfilt, convolve2d
-from dataset import Dataset
+from dataset import EEGDataset
 
 class Filter:
     def __init__(self):
         pass
 
     @staticmethod
-    def __butter_band_pass(data: Dataset,
+    def __butter_band_pass(data: EEGDataset,
                            low_cut,
                            high_cut,
                            order):
@@ -18,7 +18,7 @@ class Filter:
         return butter(order, [low, high], btype='band')
     
     @staticmethod
-    def bandpass_filter(data: Dataset,
+    def bandpass_filter(data: EEGDataset,
                         low_cut=8,
                         high_cut=30,
                         order = 3):
@@ -32,11 +32,11 @@ class Filter:
                         axis=0)
 
     @staticmethod
-    def CAR_filter(data: Dataset):
+    def CAR_filter(data: EEGDataset):
         return data.trials - np.mean(data.trials, axis=2, keepdims=True)
     
     @staticmethod
-    def laplacian_filter(data: Dataset):
+    def laplacian_filter(data: EEGDataset):
         
         laplacian_kernel = np.array([[0, 1, 0],
                                     [1, -4, 1],
