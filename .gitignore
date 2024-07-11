@@ -1,2 +1,7 @@
 *.mat
 *.h5
+/assets
+/articles
+/BCICIV_1_mat
+Plot_ICA_Kernels.ipynb
+*/__pycache__
