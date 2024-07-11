@@ -5,31 +5,10 @@ from dataset import EEGDataset
 class Filter:
     def __init__(self):
         pass
-
-    @staticmethod
-    def __butter_band_pass(data: EEGDataset,
-                           low_cut,
-                           high_cut,
-                           order):
-        
-        nyq = 0.5 * data.sampling_frequency
-        low = low_cut / nyq
-        high = high_cut / nyq
-        return butter(order, [low, high], btype='band')
     
     @staticmethod
-    def bandpass_filter(data: EEGDataset,
-                        low_cut=8,
-                        high_cut=30,
-                        order = 3):
-        b, a = Filter.__butter_band_pass(data=data,
-                                     low_cut=low_cut,
-                                     high_cut=high_cut,
-                                     order=order)
-        return filtfilt(b = b,
-                        a = a,
-                        x=data.trials,
-                        axis=0)
+    def bandpass_filter():
+        pass
 
     @staticmethod
     def CAR_filter(data: EEGDataset):

@@ -4,10 +4,12 @@ from scipy.io import loadmat
 class EEGDataset:
     def __init__(self,
                  file_path,
-                 window_length=2):
+                 start_window=0.5,
+                 end_window=2.5):
         
         self.data = loadmat(file_name=file_path)
-        self.window_length = window_length
+        self.start_window = start_window
+        self.end_window = end_window
         
         self.sampling_frequency = self.data['nfo']['fs'][0][0][0][0]
         self.EEGsignals = self.data['cnt'].T
@@ -20,7 +22,8 @@ class EEGDataset:
         self.class_labels = [x[0] for x in self.data['nfo']['classes'][0][0][0]]
         self.n_classes = len(self.class_labels)
         
-        self.window = np.arange(0, int(self.window_length*self.sampling_frequency))
+        self.window = np.arange(int(start_window * self.sampling_frequency), int(end_window * self.sampling_frequency))
+        
         self.n_samples_per_trail = len(self.window)
         
         self.trials = []
