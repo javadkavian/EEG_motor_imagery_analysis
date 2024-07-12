@@ -1,35 +1,38 @@
 import numpy as np
-from scipy.signal import butter, filtfilt, convolve2d
 from dataset import EEGDataset
+from mne.filter import filter_data
+from scipy.signal import convolve2d
 
-class Filter:
-    def __init__(self):
-        pass
     
-    @staticmethod
-    def bandpass_filter():
-        pass
+def bandpass_filter(data: EEGDataset, l_freq, h_freq):
+    return filter_data(data.trials.astype(np.float64),
+                       sfreq=data.sampling_frequency, 
+                       l_freq=l_freq, 
+                       h_freq=h_freq)
 
-    @staticmethod
-    def CAR_filter(data: EEGDataset):
-        return data.trials - np.mean(data.trials, axis=2, keepdims=True)
+
+def CAR_filter(data: EEGDataset):
+    return data.trials - np.mean(data.trials, axis=2, keepdims=True)
     
-    @staticmethod
-    def laplacian_filter(data: EEGDataset):
-        
-        # laplacian_kernel = np.array([[0, -1, 0],
-        #                             [-1, 4, -1],
-        #                             [0, -1, 0]])
-        
-        d = -0.5
-        laplacian_kernel = np.array([[0, 0, d, 0, 0],
-                                     [0, 0, 0, 0, 0],
-                                     [d, 0, 2, 0, d],
-                                     [0, 0, 0, 0, 0],
-                                     [0, 0, d, 0, 0]])
+def small_laplacian_filter(data: EEGDataset):
+    d = -1
+    laplacian_kernel = np.array([[0, d, 0],
+                                 [d, 4, d],
+                                 [0, d, 0]])
+    
+    return np.array([
+        convolve2d(trial, laplacian_kernel, mode='same', boundary='symm') for trial in data.trials
+        ])
 
-        return np.array([
-            convolve2d(trial, laplacian_kernel, mode='same', boundary='symm') for trial in data.trials
-            ])
-        
-        
+def large_laplacian_filter(data: EEGDataset):
+    d = -0.5
+    laplacian_kernel = np.array([[0, 0, d, 0, 0],
+                                 [0, 0, 0, 0, 0],
+                                 [d, 0, 2, 0, d],
+                                 [0, 0, 0, 0, 0],
+                                 [0, 0, d, 0, 0]])
+    
+    return np.array([
+        convolve2d(trial, laplacian_kernel, mode='same', boundary='symm') for trial in data.trials
+        ])
+    
