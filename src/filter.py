@@ -17,9 +17,16 @@ class Filter:
     @staticmethod
     def laplacian_filter(data: EEGDataset):
         
-        laplacian_kernel = np.array([[0, 1, 0],
-                                    [1, -4, 1],
-                                    [0, 1, 0]])
+        # laplacian_kernel = np.array([[0, -1, 0],
+        #                             [-1, 4, -1],
+        #                             [0, -1, 0]])
+        
+        d = -0.5
+        laplacian_kernel = np.array([[0, 0, d, 0, 0],
+                                     [0, 0, 0, 0, 0],
+                                     [d, 0, 2, 0, d],
+                                     [0, 0, 0, 0, 0],
+                                     [0, 0, d, 0, 0]])
 
         return np.array([
             convolve2d(trial, laplacian_kernel, mode='same', boundary='symm') for trial in data.trials
