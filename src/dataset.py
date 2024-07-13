@@ -19,7 +19,7 @@ class EEGDataset:
         self.targets = self.data['mrk']['y'][0][0][0]
         self.n_trails = len(self.cue_positions)
         
-        self.class_labels = [x[0] for x in self.data['nfo']['classes'][0][0][0]]
+        self.class_labels = dict(zip([-1, 1], [x[0] for x in self.data['nfo']['classes'][0][0][0]]))
         self.n_classes = len(self.class_labels)
         
         self.window = np.arange(int(start_window * self.sampling_frequency), int(end_window * self.sampling_frequency))
@@ -31,6 +31,9 @@ class EEGDataset:
             self.trials.append(
                 self.EEGsignals[:, self.window + pos]
             )
-        self.trials = np.array(self.trials)
-        
-    
+            
+        self.trials = np.array(self.trials).astype(np.float64)
+        self.targets.view(np.float64)
+
+    def get_window_length(self):
+        return self.end_window - self.start_window
