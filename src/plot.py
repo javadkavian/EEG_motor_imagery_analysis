@@ -13,14 +13,15 @@ def plot_eeg(data: EEGDataset, index: int, title):
     plt.title(title)
     plt.legend()
 
-def plot_scatter_trials(trials, y, labels):
+def plot_scatter_trials(trials, y, labels, title):
     X = trials.reshape(trials.shape[0], -1)
     tsne = TSNE(n_components=2, random_state=42)
     X = tsne.fit_transform(X)
     classes = np.unique(y)
-    for c in classes:
-        plt.scatter(X[y==c, 0], X[y==c, 1], label=labels[c])
-    plt.grid()
-    plt.legend()
+    for i, c in zip(range(len(classes)), classes):
+        plt.scatter(X[y==c, 0], X[y==c, 1], label=labels[i])
     plt.xlabel('comp-1')
     plt.ylabel('comp-2')
+    plt.grid()
+    plt.legend()
+    plt.title(title)

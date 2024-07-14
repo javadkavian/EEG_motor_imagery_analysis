@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
 
 class TorchDataset(Dataset):
-    def __init__(self, X, y):
+    def __init__(self, X, y=None):
         self.X = X
         self.y = y
 
@@ -14,81 +14,85 @@ class TorchDataset(Dataset):
 
     def __getitem__(self, index):
         y = 0
-        if(self.y[index] == 1):
+        if(self.y is not None and self.y[index] == 1):
             y = 1
         return self.X[index].astype(np.float32), y
 
 
 class MLP(nn.Module):
-    def __init__(self, input_shape, num_classes):
+    def __init__(self, input_shape, num_classes, batch_size, lr, num_epochs, device):
         super(MLP, self).__init__()
         self.input_shape = input_shape
-        self.fc1 = nn.Linear(input_shape[1], 100)
+        self.batch_size = batch_size
+        self.lr = lr
+        self.num_epochs = num_epochs
+        self.device = device
+        
+        self.fc1 = nn.Linear(input_shape[1], 10)
         self.relu1 = nn.ReLU()
-        # self.fc2 = nn.Linear(10, 5)
-        # self.relu2 = nn.ReLU()
-        # self.fc3 = nn.Linear(50, 5)
+        self.fc2 = nn.Linear(10, 5)
+        self.relu2 = nn.ReLU()
+        # self.fc3 = nn.Linear(10, 10)
         # self.relu3 = nn.ReLU()
-        self.fc4 = nn.Linear(100, num_classes)
+        # self.fc4 = nn.Linear(5, 5)
+        # self.relu4 = nn.ReLU()
+        self.fc5 = nn.Linear(5, num_classes)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         out = self.fc1(x)
         out = self.relu1(out)
-        # out = self.fc2(out)
-        # out = self.relu2(out)
+        out = self.fc2(out)
+        out = self.relu2(out)
         # out = self.fc3(out)
         # out = self.relu3(out)
-        out = self.fc4(out)
+        # out = self.fc4(out)
+        # out = self.relu4(out)
+        out = self.fc5(out)
         out = self.softmax(out)
         return out
     
-    
-class NNTrainTest:
-    def __init__(self, model, device) -> None:
-        self.model = model
-        self.device = device
-        
-    def train(self, num_epochs, train_dataset, batch_size, lr):
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    def fit(self, X, y):
+        train_dataset = TorchDataset(X, y)
+        train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True)
         loss_function = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(self.model.parameters(), lr=lr)
+        optimizer = optim.Adam(self.parameters(), lr=self.lr)
         
-        for epoch in range(num_epochs):
-            for i, (images, labels) in enumerate(train_loader):
-                images = images.reshape(*self.model.input_shape).to(self.device)
+        for epoch in range(self.num_epochs):
+            for i, (batch, labels) in enumerate(train_loader):
+                batch = batch.reshape(*self.input_shape).to(self.device)
                 labels = labels.to(self.device).type(torch.LongTensor)
-                outputs = self.model(images)
+                outputs = self.forward(batch)
                 loss = loss_function(outputs, labels)
 
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
 
-                if (i + 1) % 100 == 0:
-                    self._print_log(epoch, num_epochs, i + 1, len(train_loader), loss.item())
-                    
-    def test(self, test_dataset, batch_size):
-        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+                
+            if (epoch + 1) % 50 == 0:
+                self._print_log(epoch, self.num_epochs, loss.item())
+    
+        print()
         
-        with torch.no_grad():
-            correct = 0
-            total = 0
-            for images, labels in test_loader:
-                images = images.reshape(*self.model.input_shape).to(self.device)
-                labels = labels.to(self.device)
-                outputs = self.model(images)
-                _, predicted = torch.max(outputs.data, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
+    def predict(self, X):
+        scores = self.predict_proba(X)
+        return np.argmax(scores, axis=1)
+        
 
-            print(f'Accuracy on test dataset: {100 * correct / total}%')
+    def predict_proba(self, X):
+        test_loader = DataLoader(TorchDataset(X), batch_size=self.batch_size, shuffle=False)
+        scores = np.empty((0, 2))
+        with torch.no_grad():
+            for batch, labels in test_loader:
+                batch = batch.reshape(*self.input_shape).to(self.device)
+                labels = labels.to(self.device)
+                outputs = self.forward(batch)
+
+            scores = np.concatenate([scores, outputs.data])
             
-    def _print_log(self, epoch, num_epochs, step, total_steps, loss):
-        print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{step}/{total_steps}], Loss: {loss:.4f}')
-        
-    def predict(self, x):
-        x = x.reshape(*self.model.input_shape).to(self.device)
-        outputs = self.model(x)
-        _, predicted = torch.max(outputs.data, 1)
-        return predicted
+        return scores 
+    
+    def _print_log(self, epoch, num_epochs, loss):
+        print(f'Epoch [{epoch + 1}/{num_epochs}], Loss: {loss:.4f}')
+

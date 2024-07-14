@@ -16,10 +16,10 @@ class EEGDataset:
         self.n_channels, self.n_samples = self.EEGsignals.shape
         
         self.cue_positions = self.data['mrk']['pos'][0][0][0]
-        self.targets = self.data['mrk']['y'][0][0][0]
+        self.targets = np.array([1 if target == 1 else 0 for target in self.data['mrk']['y'][0][0][0]])
         self.n_trails = len(self.cue_positions)
         
-        self.class_labels = dict(zip([-1, 1], [x[0] for x in self.data['nfo']['classes'][0][0][0]]))
+        self.class_labels = [x[0] for x in self.data['nfo']['classes'][0][0][0]]
         self.n_classes = len(self.class_labels)
         
         self.window = np.arange(int(start_window * self.sampling_frequency), int(end_window * self.sampling_frequency))
