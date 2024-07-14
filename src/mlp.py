@@ -32,10 +32,6 @@ class MLP(nn.Module):
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(10, 5)
         self.relu2 = nn.ReLU()
-        # self.fc3 = nn.Linear(10, 10)
-        # self.relu3 = nn.ReLU()
-        # self.fc4 = nn.Linear(5, 5)
-        # self.relu4 = nn.ReLU()
         self.fc5 = nn.Linear(5, num_classes)
         self.softmax = nn.Softmax(dim=1)
 
@@ -44,10 +40,6 @@ class MLP(nn.Module):
         out = self.relu1(out)
         out = self.fc2(out)
         out = self.relu2(out)
-        # out = self.fc3(out)
-        # out = self.relu3(out)
-        # out = self.fc4(out)
-        # out = self.relu4(out)
         out = self.fc5(out)
         out = self.softmax(out)
         return out
