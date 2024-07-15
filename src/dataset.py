@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.io import loadmat 
 
+
 class EEGDataset:
     def __init__(self,
                  file_path,

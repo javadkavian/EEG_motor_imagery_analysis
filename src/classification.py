@@ -2,6 +2,7 @@ from sklearn.metrics import classification_report
 from metrics import plot_confusion_matrix, plot_roc
 import matplotlib.pyplot as plt
 
+
 def train_test_report(model, X_train, X_test, y_train, y_test, labels, model_name):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)

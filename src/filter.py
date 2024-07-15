@@ -4,6 +4,7 @@ from mne.filter import filter_data
 from scipy.signal import convolve2d
 import copy
     
+    
 def bandpass_filter(data: EEGDataset, l_freq, h_freq):
     filtered_data = copy.deepcopy(data)
     filtered_data.trials = filter_data(data.trials,
@@ -13,12 +14,10 @@ def bandpass_filter(data: EEGDataset, l_freq, h_freq):
     
     return filtered_data
 
-
 def CAR_filter(data: EEGDataset):
     filtered_data = copy.deepcopy(data)
     filtered_data.trials -= np.mean(data.trials, axis=2, keepdims=True)
     return filtered_data
-
     
 def small_laplacian_filter(data: EEGDataset):
     filtered_data = copy.deepcopy(data)
@@ -32,7 +31,6 @@ def small_laplacian_filter(data: EEGDataset):
         ])
     
     return filtered_data
-
 
 def large_laplacian_filter(data: EEGDataset):
     filtered_data = copy.deepcopy(data)

@@ -1,8 +1,9 @@
-import numpy as np
 import torch
+import numpy as np
 from torch import nn
-from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+
 
 class TorchDataset(Dataset):
     def __init__(self, X, y=None):
@@ -71,7 +72,6 @@ class MLP(nn.Module):
         scores = self.predict_proba(X)
         return np.argmax(scores, axis=1)
         
-
     def predict_proba(self, X):
         test_loader = DataLoader(TorchDataset(X), batch_size=self.batch_size, shuffle=False)
         scores = np.empty((0, 2))

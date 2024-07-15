@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import roc_auc_score, roc_curve
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import homogeneity_score, silhouette_score
 
 
 def plot_confusion_matrix(y_true, y_pred, labels, title):
@@ -12,7 +13,6 @@ def plot_confusion_matrix(y_true, y_pred, labels, title):
     plt.ylabel('True Label')
     plt.title(title + ' - Confusion Matrix')
         
-
 def plot_roc(y_true, y_score, title):
     
     fpr, tpr, thresholds = roc_curve(y_true, y_score)
@@ -29,3 +29,9 @@ def plot_roc(y_true, y_score, title):
     plt.title(title + ' - ROC Curve')
     plt.legend(loc="lower right")
     plt.grid()
+    
+def clustring_report(X, y_true, y_pred):
+    homogeneity = homogeneity_score(y_true, y_pred)
+    silhouette = silhouette_score(X, y_pred)
+    print(f'\u25CF Homogeneity: {homogeneity:.2f}')
+    print(f'\u25CF Silhouette:  {silhouette:.2f}')
