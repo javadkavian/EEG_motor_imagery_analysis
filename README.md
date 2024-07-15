@@ -22,6 +22,9 @@ Additionally, we try to classify and cluster the data using the features extract
 
 ### More details
 
+#### Dataset
+[**Data sets**](https://www.bbci.de/competition/iv/desc_1.html) provided by the [**Berlin BCI**](https://www.bbci.de/) group.
+
 #### Preprocessing
 
 In the preprocessing stage, we employed a variety of techniques, including:
