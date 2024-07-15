@@ -71,4 +71,6 @@ and analyzed the results using these scores:
 * Homogeneity Score
 
 ---
+For more information, please refer to the [project report](https://github.com/javadkavian/EEG_motor_imagery_analysis/blob/main/Report.pdf).
+
 [**javadkavian**](https://github.com/javadkavian) & [**MehdiJmlkh**](https://github.com/MehdiJmlkh)   
